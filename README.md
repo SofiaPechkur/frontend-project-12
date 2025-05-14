@@ -5,12 +5,12 @@
 A simplified version of Slack chat.
 Created on React & Redux. Build with vite.
 
-App available on [Render](https://????????/)
+App available on [Render](https://slack-chat-jjjh.onrender.com)
 
 ### Clone repository
 
 ```bash
-git clone https://???????????
+git clone https://github.com/SofiaPechkur/frontend-project-12.git
 ```
 
 ### Setup
