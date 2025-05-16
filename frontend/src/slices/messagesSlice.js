@@ -3,7 +3,7 @@ import { createSlice, createEntityAdapter } from '@reduxjs/toolkit';
 const messagesAdapter = createEntityAdapter();
 
 const initialState = messagesAdapter.getInitialState({
-  entities: {},
+  entities: {}, // '1':{ id: '1', body: 'text message', channelId: '1', username: 'admin }
   ids: [],
 });
 

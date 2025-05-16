@@ -4,7 +4,7 @@ const channelsAdapter = createEntityAdapter();
 
 const initialState = channelsAdapter.getInitialState({
   selectedChannelId: '1',
-  entities: {},
+  entities: {}, // "2":{"id":"2","name":"random","removable":false}
   ids: [],
 });
 

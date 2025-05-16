@@ -1,15 +1,19 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from 'react-redux';
 import { Navbar, Button, Nav, Form, InputGroup } from 'react-bootstrap';
 import axios from 'axios';
 import { addChannel, addChannels, updateChannel, removeChannel, selectChannel } from '../slices/channelsSlice.js';
 import { addMessage, addMessages, removeMessage } from '../slices/messagesSlice.js';
+import { io } from 'socket.io-client';
+import { useFormik } from 'formik';
 
 const Chat = () => {
     const channelsState = useSelector(state => state.channels);
     const messagesState = useSelector(state => state.messages);
     const idCurrentChannel = channelsState.selectedChannelId;
     const authState = useSelector(state => state.auth);
+    const userName = authState.username;
+    // const [isError, setIsError] = useState(false);
     useEffect(() => {
         if (!authState.isAuthenticated) {
             window.location.href = '/login';
@@ -42,10 +46,38 @@ const Chat = () => {
             dispatch(addMessages(messages));
         }
     }, [])
+    useEffect(() => {
+        const socket = io();
+        socket.on('newMessage', (payload) => dispatch(addMessage(payload)));
+        socket.on('newChannel', (payload) => dispatch(addChannel(payload)));
+        socket.on('renameChannel', (payload) => dispatch(updateChannel(payload)));
+        socket.on('removeChannel', (payload) => dispatch(removeChannel(payload)));
+
+        return () => {
+        socket.disconnect();
+        };
+    }, [dispatch]);
+    const formik = useFormik({
+        initialValues: {
+        body: "",
+        },
+        onSubmit: async (values, { resetForm }) => { // {body: ''}
+        try {
+            const newMessage = { body: values.body, channelId: idCurrentChannel, username: userName};
+            await axios.post('/api/v1/messages', newMessage, {
+                headers: {
+                    Authorization: `Bearer ${authState.token}`,
+                },
+            })
+            resetForm();
+        }
+        catch (error) {}
+        },
+    });
     return (
         <div className="d-flex flex-column h-100">
-            <div>{JSON.stringify(channelsState.entities)}</div>
-            <div>{JSON.stringify(messagesState.entities)}</div>
+            {/* <div>{JSON.stringify(channelsState.entities)}</div>
+            <div>{JSON.stringify(messagesState.entities)}</div> */}
             <Navbar bg="white" expand="lg" className="shadow-sm">
                 <div className="container">
                     <Navbar.Brand href="/">Hexlet Chat</Navbar.Brand>
@@ -111,15 +143,17 @@ const Chat = () => {
                                 })}
                             </div>
                             <div className="mt-auto px-5 py-3">
-                                <Form noValidate className="py-1 border rounded-2">
+                                <Form onSubmit={formik.handleSubmit} noValidate className="py-1 border rounded-2">
                                     <InputGroup>
                                         <Form.Control
                                         name="body"
                                         aria-label="Новое сообщение"
                                         placeholder="Введите сообщение..."
                                         className="border-0 p-0 ps-2"
+                                        onChange={formik.handleChange}
+                                        value={formik.values.body}
                                         />
-                                        <Button type="submit" variant="group-vertical" disabled>
+                                        <Button type="submit" variant="group-vertical"> {/* disabled={isError} */}
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" fill="currentColor">
                                                 <path fillRule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z" />
                                             </svg>
