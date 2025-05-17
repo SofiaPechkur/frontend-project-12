@@ -4,10 +4,12 @@ import { useFormik } from 'formik';
 import { Modal, Form, Button } from 'react-bootstrap';
 import { hideModal } from '../slices/modalSlice.js';
 import { addChannel, selectChannel } from '../slices/channelsSlice.js';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import * as yup from 'yup';
 
 const Add = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const authState = useSelector(state => state.auth);
   const channelsState = useSelector(state => state.channels);
@@ -19,10 +21,10 @@ const Add = () => {
   const schema = yup.object().shape({
     name: yup
       .string()
-      .min(3, 'ошибка1')
-      .max(20, 'ошибка2')
-      .required('ошибка3')
-      .notOneOf(channels, 'ошибка4'),
+      .min(3, t('add.schema.min3'))
+      .max(20, t('add.schema.max20'))
+      .required(t('add.schema.required'))
+      .notOneOf(channels, t('add.schema.mustUnique')),
   });
   const formik = useFormik({
         initialValues: {
@@ -50,7 +52,7 @@ const Add = () => {
     <Modal show aria-labelledby="contained-modal-title-vcenter" centered onHide={() => dispatch(hideModal())}>
       <Modal.Header closeButton>
         <Modal.Title>
-          Добавить канал
+          {t('add.title')}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -65,11 +67,11 @@ const Add = () => {
               value={formik.values.name}
               isInvalid={formik.errors.name && formik.touched.name}
             />
-            <Form.Label visuallyHidden>Пожалуйста, введите имя канала.</Form.Label>
+            <Form.Label visuallyHidden>{t('add.name')}</Form.Label>
             <Form.Control.Feedback type='invalid'>{formik.errors.name}</Form.Control.Feedback>
             <div className="d-flex justify-content-end">
-              <Button type="button" variant="secondary" className="me-2" onClick={() => dispatch(hideModal())}>Отменить</Button>
-              <Button type="submit" variant="primary" disabled={formik.isSubmitting}>Отправить</Button>
+              <Button type="button" variant="secondary" className="me-2" onClick={() => dispatch(hideModal())}>{t('add.cancel')}</Button>
+              <Button type="submit" variant="primary" disabled={formik.isSubmitting}>{t('add.send')}</Button>
             </div>
           </Form.Group>
         </Form>

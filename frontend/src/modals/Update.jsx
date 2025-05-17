@@ -4,10 +4,12 @@ import { useFormik } from 'formik';
 import { Modal, Form, Button } from 'react-bootstrap';
 import { hideModal } from '../slices/modalSlice.js';
 import { updateChannel } from '../slices/channelsSlice.js';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import * as yup from 'yup';
 
 const Update = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const authState = useSelector(state => state.auth);
   const modalState = useSelector((state) => state.modal);
@@ -21,10 +23,10 @@ const Update = () => {
   const schema = yup.object().shape({
     name: yup
       .string()
-      .min(3, 'ошибка1')
-      .max(20, 'ошибка2')
-      .required('ошибка3')
-      .notOneOf(channels, 'ошибка4'),
+      .min(3, t('update.schema.min3'))
+      .max(20, t('update.schema.max20'))
+      .required(t('update.schema.required'))
+      .notOneOf(channels, t('update.schema.mustUnique')),
   });
   const formik = useFormik({
         initialValues: {
@@ -56,7 +58,7 @@ const Update = () => {
     <Modal show aria-labelledby="contained-modal-title-vcenter" centered onHide={() => dispatch(hideModal())}>
       <Modal.Header closeButton>
         <Modal.Title>
-          Переименовать канал
+          {t('update.title')}
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
@@ -71,11 +73,11 @@ const Update = () => {
               value={formik.values.name}
               isInvalid={formik.errors.name && formik.touched.name}
             />
-            <Form.Label visuallyHidden>Имя канала</Form.Label>
+            <Form.Label visuallyHidden>{t('update.name')}</Form.Label>
             <Form.Control.Feedback type='invalid'>{formik.errors.name}</Form.Control.Feedback>
             <div className="d-flex justify-content-end">
               <Button type="button" variant="secondary" className="me-2" onClick={() => dispatch(hideModal())}>Отменить</Button>
-              <Button type="submit" variant="primary" disabled={formik.isSubmitting}>Отправить</Button>
+              <Button type="submit" variant="primary" disabled={formik.isSubmitting}>{t('update.send')}</Button>
             </div>
           </Form.Group>
         </Form>
