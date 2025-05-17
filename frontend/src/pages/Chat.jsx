@@ -1,13 +1,13 @@
-import { useEffect, useRef } from "react";
-import { useSelector, useDispatch } from 'react-redux';
-import { Navbar, Button, Nav, Form, InputGroup, Dropdown, ButtonGroup } from 'react-bootstrap';
-import axios from 'axios';
 import { addChannel, addChannels, updateChannel, removeChannel, selectChannel } from '../slices/channelsSlice.js';
+import { Navbar, Button, Nav, Form, InputGroup, Dropdown, ButtonGroup } from 'react-bootstrap';
 import { addMessage, addMessages } from '../slices/messagesSlice.js';
+import { useSelector, useDispatch } from 'react-redux';
+import { useEffect, useRef } from "react";
 import { io } from 'socket.io-client';
 import { useFormik } from 'formik';
 import getModal from '../modals/index.js';
 import { showModal } from "../slices/modalSlice.js";
+import axios from 'axios';
 
 const Chat = () => {
     const modalState = useSelector((state) => state.modal);
@@ -29,7 +29,7 @@ const Chat = () => {
         if (!authState.isAuthenticated) {
             window.location.href = '/login';
         }
-    }, [])
+    })
     const getChannels = async () => {
         const res = await axios.get('/api/v1/channels', {
             headers: {
@@ -89,12 +89,6 @@ const Chat = () => {
         <>
         {/* <div>{JSON.stringify(messagesState.entities)}</div> */}
             <div className="d-flex flex-column h-100">
-                <Navbar bg="white" expand="lg" className="shadow-sm">
-                    <div className="container">
-                        <Navbar.Brand href="/">Hexlet Chat</Navbar.Brand>
-                        <Button variant="primary">Выйти</Button>
-                    </div>
-                </Navbar>
                 <div className="container h-100 my-4 overflow-hidden rounded shadow">
                     <div className="row h-100 bg-white flex-md-row">
                         <div className="col-4 col-md-2 border-end px-0 bg-light d-flex flex-column h-100">

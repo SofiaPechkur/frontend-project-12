@@ -33,11 +33,6 @@ function Login() {
   });
   return (
     <div className="d-flex flex-column h-100">
-      <nav className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
-        <Container>
-          <a className="navbar-brand" href="/">Hexlet Chat</a>
-        </Container>
-      </nav>
       <Container fluid className="h-100">
         <Row className="justify-content-center align-content-center h-100">
           <Col xs={12} md={8} xxl={6}>
