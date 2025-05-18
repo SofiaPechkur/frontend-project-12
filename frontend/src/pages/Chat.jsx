@@ -1,79 +1,79 @@
 import {
   Button, Nav, Form, InputGroup, Dropdown, ButtonGroup,
-} from 'react-bootstrap';
-import { useSelector, useDispatch } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import { useEffect, useRef } from 'react';
-import { io } from 'socket.io-client';
-import { useFormik } from 'formik';
-import filter from 'leo-profanity';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import getModal from '../modals/index.js';
-import { showModal } from '../slices/modalSlice.js';
-import { addMessage, addMessages } from '../slices/messagesSlice.js';
-import { removeAuth } from '../slices/authSlice.js';
+} from 'react-bootstrap'
+import { useSelector, useDispatch } from 'react-redux'
+import { useTranslation } from 'react-i18next'
+import { useEffect, useRef } from 'react'
+import { io } from 'socket.io-client'
+import { useFormik } from 'formik'
+import filter from 'leo-profanity'
+import axios from 'axios'
+import { toast } from 'react-toastify'
+import getModal from '../modals/index.js'
+import { showModal } from '../slices/modalSlice.js'
+import { addMessage, addMessages } from '../slices/messagesSlice.js'
+import { removeAuth } from '../slices/authSlice.js'
 import {
   addChannel, addChannels, updateChannel, removeChannel, selectChannel,
-} from '../slices/channelsSlice.js';
+} from '../slices/channelsSlice.js'
 
 const Chat = () => {
-  const { t } = useTranslation();
-  const modalState = useSelector((state) => state.modal);
-  const messagesState = useSelector((state) => state.messages);
-  const channelsState = useSelector((state) => state.channels);
-  const idCurrentChannel = channelsState.selectedChannelId;
-  const authState = useSelector((state) => state.auth);
-  const userName = authState.username;
+  const { t } = useTranslation()
+  const modalState = useSelector(state => state.modal)
+  const messagesState = useSelector(state => state.messages)
+  const channelsState = useSelector(state => state.channels)
+  const idCurrentChannel = channelsState.selectedChannelId
+  const authState = useSelector(state => state.auth)
+  const userName = authState.username
   const renderModal = () => {
-    if (modalState.type === null) return null;
-    const Modal = getModal(modalState.type);
-    return <Modal />;
-  };
-  const inputRef = useRef(null);
+    if (modalState.type === null) return null
+    const Modal = getModal(modalState.type)
+    return <Modal />
+  }
+  const inputRef = useRef(null)
   useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+    inputRef.current?.focus()
+  }, [])
   useEffect(() => {
     if (!authState.isAuthenticated) {
-      window.location.href = '/login';
+      window.location.href = '/login'
     }
-  });
-  const dispatch = useDispatch();
+  })
+  const dispatch = useDispatch()
   useEffect(() => {
     const getData = async () => {
       const resChannels = await axios.get('/api/v1/channels', {
         headers: {
           Authorization: `Bearer ${authState.token}`,
         },
-      });
-      const channels = resChannels.data;
+      })
+      const channels = resChannels.data
       const resMessages = await axios.get('/api/v1/messages', {
         headers: {
           Authorization: `Bearer ${authState.token}`,
         },
-      });
-      const messages = resMessages.data;
+      })
+      const messages = resMessages.data
       if (channels) {
-        dispatch(addChannels(channels));
+        dispatch(addChannels(channels))
       }
       if (messages) {
-        dispatch(addMessages(messages));
+        dispatch(addMessages(messages))
       }
-    };
-    getData();
-  }, [dispatch, authState.token]);
+    }
+    getData()
+  }, [dispatch, authState.token])
   useEffect(() => {
-    const socket = io();
-    socket.on('newMessage', (payload) => dispatch(addMessage(payload)));
-    socket.on('newChannel', (payload) => dispatch(addChannel(payload)));
-    socket.on('renameChannel', (payload) => dispatch(updateChannel(payload)));
-    socket.on('removeChannel', (payload) => dispatch(removeChannel(payload)));
+    const socket = io()
+    socket.on('newMessage', payload => dispatch(addMessage(payload)))
+    socket.on('newChannel', payload => dispatch(addChannel(payload)))
+    socket.on('renameChannel', payload => dispatch(updateChannel(payload)))
+    socket.on('removeChannel', payload => dispatch(removeChannel(payload)))
 
     return () => {
-      socket.disconnect();
-    };
-  }, [dispatch]);
+      socket.disconnect()
+    }
+  }, [dispatch])
   const formik = useFormik({
     initialValues: {
       body: '',
@@ -84,23 +84,25 @@ const Chat = () => {
           body: filter.clean(values.body),
           channelId: idCurrentChannel,
           username: userName,
-        };
+        }
         await axios.post('/api/v1/messages', newMessage, {
           headers: {
             Authorization: `Bearer ${authState.token}`,
           },
-        });
-        resetForm();
-      } catch (error) {
+        })
+        resetForm()
+      }
+      catch (error) {
         if (error.status === 401) {
-          dispatch(removeAuth());
-          toast.error(t('errors.fetchError'));
-        } else {
-          toast.error(t('errors.networkError'));
+          dispatch(removeAuth())
+          toast.error(t('errors.fetchError'))
+        }
+        else {
+          toast.error(t('errors.networkError'))
         }
       }
     },
-  });
+  })
   return (
     <>
       <div className="d-flex flex-column h-100">
@@ -119,7 +121,7 @@ const Chat = () => {
               </div>
               <Nav id="channels-box" className="flex-column nav-fill px-2 mb-3 overflow-auto h-100 d-block" variant="pills">
                 {channelsState.ids.map((id) => {
-                  const variant = id === idCurrentChannel ? 'secondary' : 'btn';
+                  const variant = id === idCurrentChannel ? 'secondary' : 'btn'
                   if (channelsState.entities[id].removable) {
                     return (
                       <Nav.Item key={id} className="w-100">
@@ -149,7 +151,7 @@ const Chat = () => {
                           </Dropdown.Menu>
                         </Dropdown>
                       </Nav.Item>
-                    );
+                    )
                   }
                   return (
                     <Nav.Item key={id} className="w-100">
@@ -158,7 +160,7 @@ const Chat = () => {
                         {channelsState.entities[id].name}
                       </Button>
                     </Nav.Item>
-                  );
+                  )
                 })}
               </Nav>
             </div>
@@ -174,27 +176,27 @@ const Chat = () => {
                   </p>
                   <span className="text-muted">
                     {messagesState.ids
-                      .map((id) => messagesState.entities[id].channelId)
-                      .filter((channelId) => channelId === idCurrentChannel)
+                      .map(id => messagesState.entities[id].channelId)
+                      .filter(channelId => channelId === idCurrentChannel)
                       .length}
                     {' сообщений'}
                   </span>
                 </div>
                 <div id="messages-box" className="chat-messages overflow-auto px-5">
                   {messagesState.ids.map((id) => {
-                    const { channelId } = messagesState.entities[id];
+                    const { channelId } = messagesState.entities[id]
                     if (idCurrentChannel === channelId) {
-                      const { body } = messagesState.entities[id];
-                      const { username } = messagesState.entities[id];
+                      const { body } = messagesState.entities[id]
+                      const { username } = messagesState.entities[id]
                       return (
                         <div key={id} className="text-break mb-2">
                           <b>{username}</b>
                           :
                           {body}
                         </div>
-                      );
+                      )
                     }
-                    return null;
+                    return null
                   })}
                 </div>
                 <div className="mt-auto px-5 py-3">
@@ -225,7 +227,7 @@ const Chat = () => {
       </div>
       {renderModal()}
     </>
-  );
-};
+  )
+}
 
-export default Chat;
+export default Chat

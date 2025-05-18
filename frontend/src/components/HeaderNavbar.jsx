@@ -1,12 +1,12 @@
-import { Navbar, Container, Button } from 'react-bootstrap';
-import { useDispatch, useSelector } from 'react-redux';
-import { useTranslation } from 'react-i18next';
-import { removeAuth } from '../slices/authSlice.js';
+import { Navbar, Container, Button } from 'react-bootstrap'
+import { useDispatch, useSelector } from 'react-redux'
+import { useTranslation } from 'react-i18next'
+import { removeAuth } from '../slices/authSlice.js'
 
 const HeaderNavbar = () => {
-  const { t } = useTranslation();
-  const authState = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
+  const { t } = useTranslation()
+  const authState = useSelector(state => state.auth)
+  const dispatch = useDispatch()
 
   return (
     <Navbar expand="lg" bg="white" class="shadow-sm">
@@ -17,7 +17,7 @@ const HeaderNavbar = () => {
           : null}
       </Container>
     </Navbar>
-  );
-};
+  )
+}
 
-export default HeaderNavbar;
+export default HeaderNavbar

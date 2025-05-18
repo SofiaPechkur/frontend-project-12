@@ -1,24 +1,24 @@
 import {
   Container, Row, Col, Card, Form, Button, Image,
-} from 'react-bootstrap';
-import { useFormik } from 'formik';
-import { useDispatch, useSelector } from 'react-redux';
-import axios from 'axios';
-import { useTranslation } from 'react-i18next';
-import { useState, useEffect } from 'react';
-import { setAuth } from '../slices/authSlice.js';
-import image from '../assets/img1.jpg';
+} from 'react-bootstrap'
+import { useFormik } from 'formik'
+import { useDispatch, useSelector } from 'react-redux'
+import axios from 'axios'
+import { useTranslation } from 'react-i18next'
+import { useState, useEffect } from 'react'
+import { setAuth } from '../slices/authSlice.js'
+import image from '../assets/img1.jpg'
 
 const Login = () => {
-  const auth = useSelector((state) => state.auth);
-  const { t } = useTranslation();
+  const auth = useSelector(state => state.auth)
+  const { t } = useTranslation()
   useEffect(() => {
     if (auth.isAuthenticated) {
-      window.location.href = '/';
+      window.location.href = '/'
     }
-  }, [auth.isAuthenticated]);
-  const [isInputValid, setIsInputValid] = useState(true);
-  const dispatch = useDispatch();
+  }, [auth.isAuthenticated])
+  const [isInputValid, setIsInputValid] = useState(true)
+  const dispatch = useDispatch()
   const formik = useFormik({
     initialValues: {
       username: '',
@@ -26,14 +26,15 @@ const Login = () => {
     },
     onSubmit: async (values) => {
       try {
-        const res = await axios.post('/api/v1/login', values);
-        dispatch(setAuth({ username: res.data.username, token: res.data.token }));
-        window.location.href = '/';
-      } catch (err) {
-        setIsInputValid(false);
+        const res = await axios.post('/api/v1/login', values)
+        dispatch(setAuth({ username: res.data.username, token: res.data.token }))
+        window.location.href = '/'
+      }
+      catch {
+        setIsInputValid(false)
       }
     },
-  });
+  })
   return (
     <div className="d-flex flex-column h-100">
       <Container fluid className="h-100">
@@ -97,7 +98,7 @@ const Login = () => {
         </Row>
       </Container>
     </div>
-  );
-};
+  )
+}
 
-export default Login;
+export default Login

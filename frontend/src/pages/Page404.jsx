@@ -1,10 +1,10 @@
-import { Link } from 'react-router-dom';
-import { Image } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
-import img2 from '../assets/img2.svg';
+import { Link } from 'react-router-dom'
+import { Image } from 'react-bootstrap'
+import { useTranslation } from 'react-i18next'
+import img2 from '../assets/img2.svg'
 
 const Page404 = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation()
   return (
     <div className="text-center">
       <Image alt="404" className="h-25" fluid src={img2} />
@@ -14,7 +14,7 @@ const Page404 = () => {
         <Link to="/">{t('notFound.toMainPage')}</Link>
       </p>
     </div>
-  );
-};
+  )
+}
 
-export default Page404;
+export default Page404

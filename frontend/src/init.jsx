@@ -1,17 +1,17 @@
-import i18next from 'i18next';
-import { I18nextProvider, initReactI18next } from 'react-i18next';
-import filter from 'leo-profanity';
-import { Provider, ErrorBoundary } from '@rollbar/react';
-import resources from './locales/index.js';
-import App from './App.jsx';
+import i18next from 'i18next'
+import { I18nextProvider, initReactI18next } from 'react-i18next'
+import filter from 'leo-profanity'
+import { Provider, ErrorBoundary } from '@rollbar/react'
+import resources from './locales/index.js'
+import App from './App.jsx'
 
 const init = async () => {
-  filter.loadDictionary('en');
+  filter.loadDictionary('en')
   const rollbarConfig = {
     accessToken: import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN,
     environment: 'production',
-  };
-  const i18n = i18next.createInstance();
+  }
+  const i18n = i18next.createInstance()
   await i18n
     .use(initReactI18next)
     .init({
@@ -21,7 +21,7 @@ const init = async () => {
       interpolation: {
         escapeValue: false,
       },
-    });
+    })
   return (
     <Provider config={rollbarConfig}>
       <ErrorBoundary>
@@ -30,7 +30,7 @@ const init = async () => {
         </I18nextProvider>
       </ErrorBoundary>
     </Provider>
-  );
-};
+  )
+}
 
-export default init;
+export default init

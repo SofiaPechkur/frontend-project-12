@@ -1,14 +1,12 @@
-/* eslint-disable no-param-reassign */
+import { createSlice, createEntityAdapter } from '@reduxjs/toolkit'
 
-import { createSlice, createEntityAdapter } from '@reduxjs/toolkit';
-
-const channelsAdapter = createEntityAdapter();
+const channelsAdapter = createEntityAdapter()
 
 const initialState = channelsAdapter.getInitialState({
   selectedChannelId: '1',
   entities: {}, // "2":{"id":"2","name":"random","removable":false}
   ids: [],
-});
+})
 
 const channelsSlice = createSlice({
   name: 'channels',
@@ -19,12 +17,12 @@ const channelsSlice = createSlice({
     updateChannel: channelsAdapter.updateOne,
     removeChannel: channelsAdapter.removeOne,
     selectChannel: (state, action) => {
-      state.selectedChannelId = action.payload;
+      state.selectedChannelId = action.payload
     },
   },
-});
+})
 
 export const {
   addChannel, addChannels, updateChannel, removeChannel, selectChannel,
-} = channelsSlice.actions;
-export default channelsSlice.reducer;
+} = channelsSlice.actions
+export default channelsSlice.reducer

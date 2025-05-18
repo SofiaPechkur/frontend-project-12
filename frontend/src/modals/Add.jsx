@@ -1,26 +1,26 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useRef } from 'react';
-import { useFormik } from 'formik';
-import { Modal, Form, Button } from 'react-bootstrap';
-import { useTranslation } from 'react-i18next';
-import filter from 'leo-profanity';
-import { toast } from 'react-toastify';
-import axios from 'axios';
-import * as yup from 'yup';
-import { removeAuth } from '../slices/authSlice.js';
-import { addChannel, selectChannel } from '../slices/channelsSlice.js';
-import { hideModal } from '../slices/modalSlice.js';
+import { useDispatch, useSelector } from 'react-redux'
+import { useEffect, useRef } from 'react'
+import { useFormik } from 'formik'
+import { Modal, Form, Button } from 'react-bootstrap'
+import { useTranslation } from 'react-i18next'
+import filter from 'leo-profanity'
+import { toast } from 'react-toastify'
+import axios from 'axios'
+import * as yup from 'yup'
+import { removeAuth } from '../slices/authSlice.js'
+import { addChannel, selectChannel } from '../slices/channelsSlice.js'
+import { hideModal } from '../slices/modalSlice.js'
 
 const Add = () => {
-  const { t } = useTranslation();
-  const dispatch = useDispatch();
-  const authState = useSelector((state) => state.auth);
-  const channelsState = useSelector((state) => state.channels);
-  const channels = channelsState.ids.map((id) => channelsState.entities[id].name);
-  const inputRef = useRef(null);
+  const { t } = useTranslation()
+  const dispatch = useDispatch()
+  const authState = useSelector(state => state.auth)
+  const channelsState = useSelector(state => state.channels)
+  const channels = channelsState.ids.map(id => channelsState.entities[id].name)
+  const inputRef = useRef(null)
   useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+    inputRef.current?.focus()
+  }, [])
   const schema = yup.object().shape({
     name: yup
       .string()
@@ -28,7 +28,7 @@ const Add = () => {
       .max(20, t('add.schema.max20'))
       .required(t('add.schema.required'))
       .notOneOf(channels, t('add.schema.mustUnique')),
-  });
+  })
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -38,26 +38,28 @@ const Add = () => {
     validateOnChange: true,
     onSubmit: async (values) => {
       try {
-        const newChannel = { name: filter.clean(values.name) };
+        const newChannel = { name: filter.clean(values.name) }
         const res = await axios.post('/api/v1/channels', newChannel, {
           headers: {
             Authorization: `Bearer ${authState.token}`,
           },
-        });
-        dispatch(addChannel(res.data));
-        toast.success(t('add.created'));
-        dispatch(selectChannel(res.data.id));
-        dispatch(hideModal());
-      } catch (error) {
+        })
+        dispatch(addChannel(res.data))
+        toast.success(t('add.created'))
+        dispatch(selectChannel(res.data.id))
+        dispatch(hideModal())
+      }
+      catch (error) {
         if (error.status === 401) {
-          dispatch(removeAuth());
-          toast.error(t('errors.fetchError'));
-        } else {
-          toast.error(t('errors.networkError'));
+          dispatch(removeAuth())
+          toast.error(t('errors.fetchError'))
+        }
+        else {
+          toast.error(t('errors.networkError'))
         }
       }
     },
-  });
+  })
   return (
     <Modal show aria-labelledby="contained-modal-title-vcenter" centered onHide={() => dispatch(hideModal())}>
       <Modal.Header closeButton>
@@ -87,7 +89,7 @@ const Add = () => {
         </Form>
       </Modal.Body>
     </Modal>
-  );
-};
+  )
+}
 
-export default Add;
+export default Add

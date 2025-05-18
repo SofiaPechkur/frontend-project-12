@@ -1,30 +1,30 @@
 import {
   Row, Card, Form, Button, Image,
-} from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import { useFormik } from 'formik';
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import axios from 'axios';
-import * as yup from 'yup';
-import image from '../assets/img3.jpg';
-import { setAuth } from '../slices/authSlice.js';
+} from 'react-bootstrap'
+import { Link } from 'react-router-dom'
+import { useFormik } from 'formik'
+import { useDispatch, useSelector } from 'react-redux'
+import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import axios from 'axios'
+import * as yup from 'yup'
+import image from '../assets/img3.jpg'
+import { setAuth } from '../slices/authSlice.js'
 
 const SignUp = () => {
-  const { t } = useTranslation();
-  const auth = useSelector((state) => state.auth);
-  const [isInputValid, setIsInputValid] = useState(true);
-  const dispatch = useDispatch();
-  const inputRef = useRef(null);
+  const { t } = useTranslation()
+  const auth = useSelector(state => state.auth)
+  const [isInputValid, setIsInputValid] = useState(true)
+  const dispatch = useDispatch()
+  const inputRef = useRef(null)
   useEffect(() => {
     if (auth.isAuthenticated) {
-      window.location.href = '/';
+      window.location.href = '/'
     }
-  }, [auth.isAuthenticated]);
+  }, [auth.isAuthenticated])
   useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+    inputRef.current?.focus()
+  }, [])
   const schema = yup.object().shape({
     username: yup
       .string()
@@ -39,7 +39,7 @@ const SignUp = () => {
       .string()
       .oneOf([yup.ref('password'), null], t('signup.schema.mustMatch'))
       .required(t('signup.schema.required')),
-  });
+  })
   const formik = useFormik({
     initialValues: {
       username: '',
@@ -51,16 +51,17 @@ const SignUp = () => {
     validateOnChange: true,
     onSubmit: async (values) => {
       try {
-        const res = await axios.post('/api/v1/signup', { username: values.username, password: values.password });
-        dispatch(setAuth({ username: res.data.username, token: res.data.token }));
-        window.location.href = '/';
-      } catch (err) {
+        const res = await axios.post('/api/v1/signup', { username: values.username, password: values.password })
+        dispatch(setAuth({ username: res.data.username, token: res.data.token }))
+        window.location.href = '/'
+      }
+      catch (err) {
         if (err.status === 409) {
-          setIsInputValid(false);
+          setIsInputValid(false)
         }
       }
     },
-  });
+  })
   return (
     <div className="container-fluid h-100">
       <Row className="justify-content-center align-content-center h-100">
@@ -134,7 +135,7 @@ const SignUp = () => {
         </div>
       </Row>
     </div>
-  );
-};
+  )
+}
 
-export default SignUp;
+export default SignUp
