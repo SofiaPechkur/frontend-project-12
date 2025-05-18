@@ -1,9 +1,9 @@
 export default {
   translation: {
-    // errors: {
-    //   networkError: 'Ошибка сети. Проверьте подключение',
-    //   fetchError: 'Ошибка загрузки данных',
-    // },
+    errors: {
+      networkError: 'Ошибка сети. Проверьте подключение',
+      fetchError: 'Ошибка загрузки данных',
+    },
     navbar: {
       logout: 'Выйти',
     },

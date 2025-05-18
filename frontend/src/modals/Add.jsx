@@ -5,6 +5,8 @@ import { Modal, Form, Button } from 'react-bootstrap';
 import { hideModal } from '../slices/modalSlice.js';
 import { addChannel, selectChannel } from '../slices/channelsSlice.js';
 import { useTranslation } from 'react-i18next';
+import { removeAuth } from '../slices/authSlice.js';
+import { toast } from 'react-toastify';
 import axios from 'axios';
 import * as yup from 'yup';
 
@@ -42,10 +44,18 @@ const Add = () => {
                     }
                 })
                 dispatch(addChannel(res.data));
+                toast.success(t('add.created'));
                 dispatch(selectChannel(res.data.id))
                 dispatch(hideModal());
             }
-            catch (error) {}
+            catch (error) {
+              if (error.status === 401) {
+                dispatch(removeAuth());
+                toast.error(t('errors.fetchError'));
+              } else {
+                toast.error(t('errors.networkError'));
+              }
+            }
         },
   });
   return (

@@ -6,7 +6,8 @@ import Chat from './pages/Chat.jsx';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Provider } from 'react-redux';
 import store from './slices/index.js';
-import HeaderNavbar from './components/HeaderNavbar.jsx'
+import HeaderNavbar from './components/HeaderNavbar.jsx';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
               <Route path="/signup" element={<SignUp />} />
             </Routes>
           </div>
+          <ToastContainer />
         </BrowserRouter>
       </Provider>
   );

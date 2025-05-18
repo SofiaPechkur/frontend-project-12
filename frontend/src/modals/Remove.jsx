@@ -3,6 +3,8 @@ import { Modal, Button } from 'react-bootstrap';
 import { hideModal } from '../slices/modalSlice.js';
 import { removeChannel, selectChannel } from '../slices/channelsSlice.js';
 import { useTranslation } from 'react-i18next';
+import { removeAuth } from '../slices/authSlice.js';
+import { toast } from 'react-toastify';
 import axios from 'axios';
 
 const Remove = () => {
@@ -19,10 +21,18 @@ const Remove = () => {
         }
       })
       dispatch(removeChannel(res.data.id));
+      toast.success(t('remove.removed'));
       dispatch(hideModal());
       dispatch(selectChannel('1'));
     }
-    catch (error) {}
+    catch (error) {
+      if (error.status === 401) {
+        dispatch(removeAuth());
+        toast.error(t('errors.fetchError'));
+      } else {
+        toast.error(t('errors.networkError'));
+      }
+    }
   }
   return (
     <Modal show aria-labelledby="contained-modal-title-vcenter" centered onHide={() => dispatch(hideModal())}>
