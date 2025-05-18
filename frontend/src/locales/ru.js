@@ -1,7 +1,7 @@
 export default {
   translation: {
     errors: {
-      networkError: 'Ошибка сети. Проверьте подключение',
+      networkError: 'Ошибка соединения',
       fetchError: 'Ошибка загрузки данных',
     },
     navbar: {
