@@ -1,34 +1,35 @@
-import { Container, Row, Col, Card, Form, Button, Image } from 'react-bootstrap';
-import image from '../assets/img1.jpg';
+import {
+  Container, Row, Col, Card, Form, Button, Image,
+} from 'react-bootstrap';
 import { useFormik } from 'formik';
 import { useDispatch, useSelector } from 'react-redux';
-import { setAuth } from '../slices/authSlice.js';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
+import { setAuth } from '../slices/authSlice.js';
+import image from '../assets/img1.jpg';
 
 const Login = () => {
-  const auth = useSelector(state => state.auth);
+  const auth = useSelector((state) => state.auth);
   const { t } = useTranslation();
   useEffect(() => {
     if (auth.isAuthenticated) {
       window.location.href = '/';
     }
-  }, [])
+  }, [auth.isAuthenticated]);
   const [isInputValid, setIsInputValid] = useState(true);
   const dispatch = useDispatch();
   const formik = useFormik({
     initialValues: {
-      username: "",
-      password: "",
+      username: '',
+      password: '',
     },
     onSubmit: async (values) => {
       try {
         const res = await axios.post('/api/v1/login', values);
-        dispatch(setAuth({username: res.data.username, token: res.data.token}));
+        dispatch(setAuth({ username: res.data.username, token: res.data.token }));
         window.location.href = '/';
-      }
-      catch (err) {
+      } catch (err) {
         setIsInputValid(false);
       }
     },
@@ -76,7 +77,7 @@ const Login = () => {
                         value={formik.values.password}
                       />
                       <Form.Label htmlFor="password">{t('login.password')}</Form.Label>
-                      <Form.Control.Feedback type='invalid' tooltip>{t('login.feedback')}</Form.Control.Feedback>
+                      <Form.Control.Feedback type="invalid" tooltip>{t('login.feedback')}</Form.Control.Feedback>
                     </Form.Group>
                     <Button type="submit" className="w-100 mb-3" variant="outline-primary">
                       {t('login.enter')}
@@ -86,7 +87,8 @@ const Login = () => {
               </Card.Body>
               <Card.Footer className="p-4">
                 <div className="text-center">
-                  <span>{t('login.noAccount')}</span>{' '}
+                  <span>{t('login.noAccount')}</span>
+                  {' '}
                   <a href="/signup">{t('login.registration')}</a>
                 </div>
               </Card.Footer>
@@ -96,6 +98,6 @@ const Login = () => {
       </Container>
     </div>
   );
-}
+};
 
 export default Login;

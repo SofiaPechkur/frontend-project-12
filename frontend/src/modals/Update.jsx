@@ -1,22 +1,22 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useRef } from "react";
+import { useEffect, useRef } from 'react';
 import { useFormik } from 'formik';
 import { Modal, Form, Button } from 'react-bootstrap';
-import { hideModal } from '../slices/modalSlice.js';
-import { updateChannel } from '../slices/channelsSlice.js';
 import { useTranslation } from 'react-i18next';
-import { removeAuth } from '../slices/authSlice.js';
 import { toast } from 'react-toastify';
 import filter from 'leo-profanity';
 import axios from 'axios';
 import * as yup from 'yup';
+import { removeAuth } from '../slices/authSlice.js';
+import { updateChannel } from '../slices/channelsSlice.js';
+import { hideModal } from '../slices/modalSlice.js';
 
 const Update = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const authState = useSelector(state => state.auth);
+  const authState = useSelector((state) => state.auth);
   const modalState = useSelector((state) => state.modal);
-  const channelsState = useSelector(state => state.channels);
+  const channelsState = useSelector((state) => state.channels);
   const channels = channelsState.ids.map((id) => channelsState.entities[id].name);
   const inputRef = useRef(null);
   useEffect(() => {
@@ -32,38 +32,37 @@ const Update = () => {
       .notOneOf(channels, t('update.schema.mustUnique')),
   });
   const formik = useFormik({
-        initialValues: {
-        name: modalState.processedChannel.name,
-        id: modalState.processedChannel.id,
-        },
-        validationSchema: schema,
-        validateOnBlur: true,
-        validateOnChange: true,
-        onSubmit: async (values) => {
-            try {
-                const editedChannel = { name: filter.clean(values.name) };
-                const res = await axios.patch(`/api/v1/channels/${values.id}`, editedChannel, {
-                    headers: {
-                        Authorization: `Bearer ${authState.token}`,
-                    }
-                })
-                console.log(res.data)
-                dispatch(updateChannel({
-                  id: res.data.id,
-                  changes: { name: res.data.name },
-                }));
-                dispatch(hideModal());
-                toast.success(t('update.updated'));
-            }
-            catch (error) {
-              if (error.status === 401) {
-                dispatch(removeAuth());
-                toast.error(t('errors.fetchError'));
-              } else {
-                toast.error(t('errors.networkError'));
-              }
-            }
-        },
+    initialValues: {
+      name: modalState.processedChannel.name,
+      id: modalState.processedChannel.id,
+    },
+    validationSchema: schema,
+    validateOnBlur: true,
+    validateOnChange: true,
+    onSubmit: async (values) => {
+      try {
+        const editedChannel = { name: filter.clean(values.name) };
+        const res = await axios.patch(`/api/v1/channels/${values.id}`, editedChannel, {
+          headers: {
+            Authorization: `Bearer ${authState.token}`,
+          },
+        });
+        console.log(res.data);
+        dispatch(updateChannel({
+          id: res.data.id,
+          changes: { name: res.data.name },
+        }));
+        dispatch(hideModal());
+        toast.success(t('update.updated'));
+      } catch (error) {
+        if (error.status === 401) {
+          dispatch(removeAuth());
+          toast.error(t('errors.fetchError'));
+        } else {
+          toast.error(t('errors.networkError'));
+        }
+      }
+    },
   });
   return (
     <Modal show aria-labelledby="contained-modal-title-vcenter" centered onHide={() => dispatch(hideModal())}>
@@ -85,7 +84,7 @@ const Update = () => {
               isInvalid={formik.errors.name && formik.touched.name}
             />
             <Form.Label visuallyHidden>{t('update.name')}</Form.Label>
-            <Form.Control.Feedback type='invalid'>{formik.errors.name}</Form.Control.Feedback>
+            <Form.Control.Feedback type="invalid">{formik.errors.name}</Form.Control.Feedback>
             <div className="d-flex justify-content-end">
               <Button type="button" variant="secondary" className="me-2" onClick={() => dispatch(hideModal())}>Отменить</Button>
               <Button type="submit" variant="primary" disabled={formik.isSubmitting}>{t('update.send')}</Button>

@@ -4,7 +4,6 @@ import channelsReducer from './channelsSlice.js';
 import messagesReducer from './messagesSlice.js';
 import modalReducer from './modalSlice.js';
 
-
 const store = configureStore({
   reducer: {
     auth: authReducer,

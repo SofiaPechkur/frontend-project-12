@@ -1,7 +1,7 @@
 import { Navbar, Container, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { removeAuth } from '../slices/authSlice.js';
 import { useTranslation } from 'react-i18next';
+import { removeAuth } from '../slices/authSlice.js';
 
 const HeaderNavbar = () => {
   const { t } = useTranslation();
