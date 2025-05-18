@@ -6,6 +6,7 @@ import { hideModal } from '../slices/modalSlice.js';
 import { addChannel, selectChannel } from '../slices/channelsSlice.js';
 import { useTranslation } from 'react-i18next';
 import { removeAuth } from '../slices/authSlice.js';
+import filter from 'leo-profanity';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 import * as yup from 'yup';
@@ -37,7 +38,7 @@ const Add = () => {
         validateOnChange: true,
         onSubmit: async (values) => {
             try {
-                const newChannel = { name: values.name };
+                const newChannel = { name: filter.clean(values.name) };
                 const res = await axios.post('/api/v1/channels', newChannel, {
                     headers: {
                         Authorization: `Bearer ${authState.token}`,

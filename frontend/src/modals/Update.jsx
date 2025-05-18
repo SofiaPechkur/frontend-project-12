@@ -7,6 +7,7 @@ import { updateChannel } from '../slices/channelsSlice.js';
 import { useTranslation } from 'react-i18next';
 import { removeAuth } from '../slices/authSlice.js';
 import { toast } from 'react-toastify';
+import filter from 'leo-profanity';
 import axios from 'axios';
 import * as yup from 'yup';
 
@@ -40,7 +41,7 @@ const Update = () => {
         validateOnChange: true,
         onSubmit: async (values) => {
             try {
-                const editedChannel = { name: values.name };
+                const editedChannel = { name: filter.clean(values.name) };
                 const res = await axios.patch(`/api/v1/channels/${values.id}`, editedChannel, {
                     headers: {
                         Authorization: `Bearer ${authState.token}`,

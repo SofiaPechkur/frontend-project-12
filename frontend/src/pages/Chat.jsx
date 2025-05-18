@@ -8,6 +8,7 @@ import { io } from 'socket.io-client';
 import { useFormik } from 'formik';
 import getModal from '../modals/index.js';
 import { showModal } from "../slices/modalSlice.js";
+import filter from 'leo-profanity';
 import axios from 'axios';
 
 const Chat = () => {
@@ -76,7 +77,7 @@ const Chat = () => {
         },
         onSubmit: async (values, { resetForm }) => {
         try {
-            const newMessage = { body: values.body, channelId: idCurrentChannel, username: userName};
+            const newMessage = { body: filter.clean(values.body), channelId: idCurrentChannel, username: userName};
             await axios.post('/api/v1/messages', newMessage, {
                 headers: {
                     Authorization: `Bearer ${authState.token}`,
