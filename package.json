@@ -1,6 +1,7 @@
 {
   "name": "@hexlet/code",
   "version": "1.0.0",
+  "type": "module",
   "description": "A simplified version of Slack chat",
   "main": "index.js",
   "scripts": {
@@ -12,6 +13,7 @@
   "author": "SofiyaPechkur",
   "license": "ISC",
   "dependencies": {
-    "@hexlet/chat-server": "^2.0.4"
+    "@hexlet/chat-server": "^2.0.4",
+    "react-router-dom": "^6.30.0"
   }
 }

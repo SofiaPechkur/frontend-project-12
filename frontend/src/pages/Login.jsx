@@ -3,18 +3,20 @@ import {
 } from 'react-bootstrap'
 import { useFormik } from 'formik'
 import { useDispatch, useSelector } from 'react-redux'
-import axios from 'axios'
 import { useTranslation } from 'react-i18next'
 import { useState, useEffect } from 'react'
 import { setAuth } from '../slices/authSlice.js'
+import { routes } from '../routes/routes.js'
 import image from '../assets/img1.jpg'
+import { useLogin } from '../services/authApi.js'
 
 const Login = () => {
+  const [login] = useLogin()
   const auth = useSelector(state => state.auth)
   const { t } = useTranslation()
   useEffect(() => {
     if (auth.isAuthenticated) {
-      window.location.href = '/'
+      window.location.href = routes.chat
     }
   }, [auth.isAuthenticated])
   const [isInputValid, setIsInputValid] = useState(true)
@@ -26,9 +28,9 @@ const Login = () => {
     },
     onSubmit: async (values) => {
       try {
-        const res = await axios.post('/api/v1/login', values)
-        dispatch(setAuth({ username: res.data.username, token: res.data.token }))
-        window.location.href = '/'
+        const res = await login(values).unwrap()
+        dispatch(setAuth({ username: res.username, token: res.token }))
+        window.location.href = routes.chat
       }
       catch {
         setIsInputValid(false)
@@ -90,7 +92,7 @@ const Login = () => {
                 <div className="text-center">
                   <span>{t('login.noAccount')}</span>
                   {' '}
-                  <a href="/signup">{t('login.registration')}</a>
+                  <a href={routes.signup}>{t('login.registration')}</a>
                 </div>
               </Card.Footer>
             </Card>

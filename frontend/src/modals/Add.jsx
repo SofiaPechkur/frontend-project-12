@@ -5,16 +5,16 @@ import { Modal, Form, Button } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
 import filter from 'leo-profanity'
 import { toast } from 'react-toastify'
-import axios from 'axios'
 import * as yup from 'yup'
 import { removeAuth } from '../slices/authSlice.js'
 import { addChannel, selectChannel } from '../slices/channelsSlice.js'
 import { hideModal } from '../slices/modalSlice.js'
+import { useSendNewChannel } from '../services/channelsApi.js'
 
 const Add = () => {
+  const [sendNewChannel] = useSendNewChannel()
   const { t } = useTranslation()
   const dispatch = useDispatch()
-  const authState = useSelector(state => state.auth)
   const channelsState = useSelector(state => state.channels)
   const channels = channelsState.ids.map(id => channelsState.entities[id].name)
   const inputRef = useRef(null)
@@ -39,14 +39,10 @@ const Add = () => {
     onSubmit: async (values) => {
       try {
         const newChannel = { name: filter.clean(values.name) }
-        const res = await axios.post('/api/v1/channels', newChannel, {
-          headers: {
-            Authorization: `Bearer ${authState.token}`,
-          },
-        })
-        dispatch(addChannel(res.data))
+        const res = await sendNewChannel(newChannel).unwrap()
+        dispatch(addChannel(res))
         toast.success(t('add.created'))
-        dispatch(selectChannel(res.data.id))
+        dispatch(selectChannel(res.id))
         dispatch(hideModal())
       }
       catch (error) {

@@ -27,7 +27,7 @@ export default {
       noAccount: 'Нет аккаунта? ',
       registration: 'Регистрация',
     },
-    notFound: {
+    page404: {
       title: 'Страница не найдена',
       goTo: 'Но вы можете перейти ',
       toMainPage: 'на главную страницу',

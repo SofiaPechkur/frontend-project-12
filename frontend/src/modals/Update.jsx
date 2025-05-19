@@ -5,16 +5,16 @@ import { Modal, Form, Button } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import filter from 'leo-profanity'
-import axios from 'axios'
 import * as yup from 'yup'
 import { removeAuth } from '../slices/authSlice.js'
 import { updateChannel } from '../slices/channelsSlice.js'
 import { hideModal } from '../slices/modalSlice.js'
+import { useSendUpdateChannel } from '../services/channelsApi.js'
 
 const Update = () => {
+  const [sendUpdateChannel] = useSendUpdateChannel()
   const { t } = useTranslation()
   const dispatch = useDispatch()
-  const authState = useSelector(state => state.auth)
   const modalState = useSelector(state => state.modal)
   const channelsState = useSelector(state => state.channels)
   const channels = channelsState.ids.map(id => channelsState.entities[id].name)
@@ -41,16 +41,11 @@ const Update = () => {
     validateOnChange: true,
     onSubmit: async (values) => {
       try {
-        const editedChannel = { name: filter.clean(values.name) }
-        const res = await axios.patch(`/api/v1/channels/${values.id}`, editedChannel, {
-          headers: {
-            Authorization: `Bearer ${authState.token}`,
-          },
-        })
-        console.log(res.data)
+        const editedChannel = { id: values.id, name: filter.clean(values.name) }
+        const res = await sendUpdateChannel(editedChannel).unwrap()
         dispatch(updateChannel({
-          id: res.data.id,
-          changes: { name: res.data.name },
+          id: res.id,
+          changes: { name: res.name },
         }))
         dispatch(hideModal())
         toast.success(t('update.updated'))

@@ -1,9 +1,14 @@
 import i18next from 'i18next'
 import { I18nextProvider, initReactI18next } from 'react-i18next'
+import { Provider } from 'react-redux'
+import store from './slices/index.js'
 import filter from 'leo-profanity'
-import { Provider, ErrorBoundary } from '@rollbar/react'
+import { Provider as RollbarProvider, ErrorBoundary } from '@rollbar/react'
 import resources from './locales/index.js'
 import App from './App.jsx'
+import { io } from 'socket.io-client'
+import { addMessage } from './slices/messagesSlice.js'
+import { addChannel, updateChannel, removeChannel } from './slices/channelsSlice.js'
 
 const init = async () => {
   filter.loadDictionary('en')
@@ -11,6 +16,11 @@ const init = async () => {
     accessToken: import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN,
     environment: 'production',
   }
+  const socket = io()
+  socket.on('newMessage', payload => store.dispatch(addMessage(payload)))
+  socket.on('newChannel', payload => store.dispatch(addChannel(payload)))
+  socket.on('renameChannel', payload => store.dispatch(updateChannel(payload)))
+  socket.on('removeChannel', payload => store.dispatch(removeChannel(payload)))
   const i18n = i18next.createInstance()
   await i18n
     .use(initReactI18next)
@@ -23,13 +33,15 @@ const init = async () => {
       },
     })
   return (
-    <Provider config={rollbarConfig}>
+    <RollbarProvider config={rollbarConfig}>
       <ErrorBoundary>
         <I18nextProvider i18n={i18n}>
-          <App />
+          <Provider store={store}>
+            <App />
+          </Provider>
         </I18nextProvider>
       </ErrorBoundary>
-    </Provider>
+    </RollbarProvider>
   )
 }
 

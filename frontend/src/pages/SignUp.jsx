@@ -4,14 +4,16 @@ import {
 import { Link } from 'react-router-dom'
 import { useFormik } from 'formik'
 import { useDispatch, useSelector } from 'react-redux'
+import { routes } from '../routes/routes.js'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import axios from 'axios'
 import * as yup from 'yup'
 import image from '../assets/img3.jpg'
 import { setAuth } from '../slices/authSlice.js'
+import { useSignup } from '../services/authApi.js'
 
 const SignUp = () => {
+  const [signup] = useSignup()
   const { t } = useTranslation()
   const auth = useSelector(state => state.auth)
   const [isInputValid, setIsInputValid] = useState(true)
@@ -19,7 +21,7 @@ const SignUp = () => {
   const inputRef = useRef(null)
   useEffect(() => {
     if (auth.isAuthenticated) {
-      window.location.href = '/'
+      window.location.href = routes.chat
     }
   }, [auth.isAuthenticated])
   useEffect(() => {
@@ -51,9 +53,9 @@ const SignUp = () => {
     validateOnChange: true,
     onSubmit: async (values) => {
       try {
-        const res = await axios.post('/api/v1/signup', { username: values.username, password: values.password })
-        dispatch(setAuth({ username: res.data.username, token: res.data.token }))
-        window.location.href = '/'
+        const res = await signup({ username: values.username, password: values.password }).unwrap()
+        dispatch(setAuth({ username: res.username, token: res.token }))
+        window.location.href = routes.chat
       }
       catch (err) {
         if (err.status === 409) {
@@ -128,7 +130,7 @@ const SignUp = () => {
             <Card.Footer className="p-4">
               <div className="text-center">
                 <span>{t('signup.hasAccount')}</span>
-                <Link to="/login">{t('signup.enter')}</Link>
+                <Link to={routes.login}>{t('signup.enter')}</Link>
               </div>
             </Card.Footer>
           </Card>
