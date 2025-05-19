@@ -14,13 +14,13 @@ import { useNavigate } from 'react-router-dom'
 const Login = () => {
   const navigate = useNavigate()
   const [login] = useLogin()
-  const auth = useSelector(state => state.auth)
+  const authState = useSelector(state => state.auth)
   const { t } = useTranslation()
   useEffect(() => {
-    if (auth.isAuthenticated) {
+    if (authState.isAuthenticated) {
       navigate(routes.chat)
     }
-  }, [auth.isAuthenticated])
+  }, [authState.isAuthenticated, navigate])
   const [isInputValid, setIsInputValid] = useState(true)
   const dispatch = useDispatch()
   const formik = useFormik({
