@@ -9,12 +9,14 @@ import FormMessage from './chat/FormMessage.jsx'
 import ModalFacade from '../modals/ModalFacade.jsx'
 import { useGetChannels } from '../services/channelsApi.js'
 import { useGetMessages } from '../services/mesagesApi.js'
+import { useNavigate } from 'react-router-dom'
 
 const Chat = () => {
+  const navigate = useNavigate()
   const authState = useSelector(state => state.auth)
   useEffect(() => {
     if (!authState.isAuthenticated) {
-      window.location.href = routes.login
+      navigate(routes.login)
     }
   })
   const dispatch = useDispatch()

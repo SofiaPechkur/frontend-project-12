@@ -11,8 +11,10 @@ import * as yup from 'yup'
 import image from '../assets/img3.jpg'
 import { setAuth } from '../slices/authSlice.js'
 import { useSignup } from '../services/authApi.js'
+import { useNavigate } from 'react-router-dom'
 
 const SignUp = () => {
+  const navigate = useNavigate()
   const [signup] = useSignup()
   const { t } = useTranslation()
   const auth = useSelector(state => state.auth)
@@ -21,7 +23,7 @@ const SignUp = () => {
   const inputRef = useRef(null)
   useEffect(() => {
     if (auth.isAuthenticated) {
-      window.location.href = routes.chat
+      navigate(routes.chat)
     }
   }, [auth.isAuthenticated])
   useEffect(() => {
@@ -55,7 +57,7 @@ const SignUp = () => {
       try {
         const res = await signup({ username: values.username, password: values.password }).unwrap()
         dispatch(setAuth({ username: res.username, token: res.token }))
-        window.location.href = routes.chat
+        navigate(routes.chat)
       }
       catch (err) {
         if (err.status === 409) {

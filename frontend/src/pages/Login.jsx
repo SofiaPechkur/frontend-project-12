@@ -9,14 +9,16 @@ import { setAuth } from '../slices/authSlice.js'
 import { routes } from '../routes/routes.js'
 import image from '../assets/img1.jpg'
 import { useLogin } from '../services/authApi.js'
+import { useNavigate } from 'react-router-dom'
 
 const Login = () => {
+  const navigate = useNavigate()
   const [login] = useLogin()
   const auth = useSelector(state => state.auth)
   const { t } = useTranslation()
   useEffect(() => {
     if (auth.isAuthenticated) {
-      window.location.href = routes.chat
+      navigate(routes.chat)
     }
   }, [auth.isAuthenticated])
   const [isInputValid, setIsInputValid] = useState(true)
@@ -30,7 +32,7 @@ const Login = () => {
       try {
         const res = await login(values).unwrap()
         dispatch(setAuth({ username: res.username, token: res.token }))
-        window.location.href = routes.chat
+        navigate(routes.chat)
       }
       catch {
         setIsInputValid(false)
