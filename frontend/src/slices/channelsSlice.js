@@ -1,9 +1,9 @@
 import { createSlice, createEntityAdapter } from '@reduxjs/toolkit'
+import { channelsApi } from '../services/channelsApi.js'
 
 const channelsAdapter = createEntityAdapter()
 
 const initialState = channelsAdapter.getInitialState({
-  selectedChannelId: '1',
   entities: {}, // "2":{"id":"2","name":"random","removable":false}
   ids: [],
 })
@@ -16,13 +16,19 @@ const channelsSlice = createSlice({
     addChannels: channelsAdapter.addMany,
     updateChannel: channelsAdapter.updateOne,
     removeChannel: channelsAdapter.removeOne,
-    selectChannel: (state, action) => {
-      state.selectedChannelId = action.payload
-    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addMatcher(
+        channelsApi.endpoints.getChannels.matchFulfilled,
+        (state, action) => {
+          channelsAdapter.upsertMany(state, action.payload)
+        },
+      )
   },
 })
 
 export const {
-  addChannel, addChannels, updateChannel, removeChannel, selectChannel,
+  addChannel, addChannels, updateChannel, removeChannel,
 } = channelsSlice.actions
 export default channelsSlice.reducer

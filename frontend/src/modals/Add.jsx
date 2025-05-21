@@ -6,9 +6,7 @@ import { useTranslation } from 'react-i18next'
 import filter from 'leo-profanity'
 import { toast } from 'react-toastify'
 import * as yup from 'yup'
-import { removeAuth } from '../slices/authSlice.js'
-import { addChannel, selectChannel } from '../slices/channelsSlice.js'
-import { hideModal } from '../slices/modalSlice.js'
+import { hideModal, selectChannel } from '../slices/uiSlice.js'
 import { useSendNewChannel } from '../services/channelsApi.js'
 
 const Add = () => {
@@ -40,19 +38,12 @@ const Add = () => {
       try {
         const newChannel = { name: filter.clean(values.name) }
         const res = await sendNewChannel(newChannel).unwrap()
-        dispatch(addChannel(res))
         toast.success(t('add.created'))
         dispatch(selectChannel(res.id))
         dispatch(hideModal())
       }
-      catch (error) {
-        if (error.status === 401) {
-          dispatch(removeAuth())
-          toast.error(t('errors.fetchError'))
-        }
-        else {
-          toast.error(t('errors.networkError'))
-        }
+      catch {
+        toast.error(t('errors.networkError'))
       }
     },
   })

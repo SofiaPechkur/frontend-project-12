@@ -4,20 +4,13 @@ import { useFormik } from 'formik'
 import { toast } from 'react-toastify'
 import { useTranslation } from 'react-i18next'
 import filter from 'leo-profanity'
-import { useSelector, useDispatch } from 'react-redux'
-import { removeAuth } from '../../slices/authSlice.js'
 import image from '../../assets/img5.png'
-import { useSendMessage } from '../../services/mesagesApi.js'
+import { useSendMessage } from '../../services/messagesApi.js'
 
-const FormMessage = () => {
+const FormMessage = ({ currentChannelId, userName }) => {
   const [sendMessage] = useSendMessage()
-  const authState = useSelector(state => state.auth)
-  const userName = authState.username
   const { t } = useTranslation()
-  const dispatch = useDispatch()
   const inputRef = useRef(null)
-  const channelsState = useSelector(state => state.channels)
-  const idCurrentChannel = channelsState.selectedChannelId
   useEffect(() => {
     inputRef.current?.focus()
   }, [])
@@ -29,20 +22,14 @@ const FormMessage = () => {
       try {
         const newMessage = {
           body: filter.clean(values.body),
-          channelId: idCurrentChannel,
+          channelId: currentChannelId,
           username: userName,
         }
         await sendMessage(newMessage).unwrap()
         resetForm()
       }
-      catch (error) {
-        if (error.status === 401) {
-          dispatch(removeAuth())
-          toast.error(t('errors.fetchError'))
-        }
-        else {
-          toast.error(t('errors.networkError'))
-        }
+      catch {
+        toast.error(t('errors.networkError'))
       }
     },
   })

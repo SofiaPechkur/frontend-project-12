@@ -16,11 +16,13 @@ const init = async () => {
     accessToken: import.meta.env.VITE_ROLLBAR_ACCESS_TOKEN,
     environment: 'production',
   }
+
   const socket = io()
   socket.on('newMessage', payload => store.dispatch(addMessage(payload)))
   socket.on('newChannel', payload => store.dispatch(addChannel(payload)))
-  socket.on('renameChannel', payload => store.dispatch(updateChannel(payload)))
-  socket.on('removeChannel', payload => store.dispatch(removeChannel(payload)))
+  socket.on('renameChannel', payload => store.dispatch(updateChannel({ id: payload.id, changes: { name: payload.name } })))
+  socket.on('removeChannel', payload => store.dispatch(removeChannel(payload.id)))
+
   const i18n = i18next.createInstance()
   await i18n
     .use(initReactI18next)

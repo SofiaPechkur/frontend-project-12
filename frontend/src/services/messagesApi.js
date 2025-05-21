@@ -1,8 +1,8 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { apiPath, apiRoutes } from '../routes/routes.js'
 
-export const mesagesApi = createApi({
-  reducerPath: 'mesagesApi',
+export const messagesApi = createApi({
+  reducerPath: 'messagesApi',
   baseQuery: fetchBaseQuery({
     baseUrl: apiPath,
     prepareHeaders: (headers, { getState }) => {
@@ -30,7 +30,7 @@ export const mesagesApi = createApi({
 const {
   useGetMessagesQuery,
   useSendMessageMutation,
-} = mesagesApi
+} = messagesApi
 
 export {
   useGetMessagesQuery as useGetMessages,

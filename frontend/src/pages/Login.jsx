@@ -2,25 +2,19 @@ import {
   Container, Row, Col, Card, Form, Button, Image,
 } from 'react-bootstrap'
 import { useFormik } from 'formik'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useTranslation } from 'react-i18next'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { setAuth } from '../slices/authSlice.js'
 import { routes } from '../routes/routes.js'
 import image from '../assets/img1.jpg'
-import { useLogin } from '../services/authApi.js'
 import { useNavigate } from 'react-router-dom'
+import { apiRoutes, apiPath } from '../routes/routes.js'
+import axios from 'axios'
 
 const Login = () => {
   const navigate = useNavigate()
-  const [login] = useLogin()
-  const authState = useSelector(state => state.auth)
   const { t } = useTranslation()
-  useEffect(() => {
-    if (authState.isAuthenticated) {
-      navigate(routes.chat)
-    }
-  }, [authState.isAuthenticated, navigate])
   const [isInputValid, setIsInputValid] = useState(true)
   const dispatch = useDispatch()
   const formik = useFormik({
@@ -30,8 +24,8 @@ const Login = () => {
     },
     onSubmit: async (values) => {
       try {
-        const res = await login(values).unwrap()
-        dispatch(setAuth({ username: res.username, token: res.token }))
+        const res = await axios.post(`${apiPath}/${apiRoutes.loginPath()}`, values)
+        dispatch(setAuth({ username: res.data.username, token: res.data.token }))
         navigate(routes.chat)
       }
       catch {

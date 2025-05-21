@@ -1,37 +1,36 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { useEffect } from 'react'
-import { routes } from '../routes/routes.js'
-import { addMessages } from '../slices/messagesSlice.js'
-import { addChannels } from '../slices/channelsSlice.js'
-import Channels from './chat/Channels.jsx'
-import Messages from './chat/Messages.jsx'
-import FormMessage from './chat/FormMessage.jsx'
+import Channels from '../components/chat/Channels.jsx'
+import Messages from '../components/chat/Messages.jsx'
+import FormMessage from '../components/chat/FormMessage.jsx'
 import ModalFacade from '../modals/ModalFacade.jsx'
 import { useGetChannels } from '../services/channelsApi.js'
-import { useGetMessages } from '../services/mesagesApi.js'
-import { useNavigate } from 'react-router-dom'
+import { useGetMessages } from '../services/messagesApi.js'
+import { toast } from 'react-toastify'
+import { removeAuth } from '../slices/authSlice.js'
+import { useTranslation } from 'react-i18next'
 
 const Chat = () => {
-  const navigate = useNavigate()
-  const authState = useSelector(state => state.auth)
-  useEffect(() => {
-    if (!authState.isAuthenticated) {
-      navigate(routes.login)
-    }
-  })
+  const { t } = useTranslation()
+  const authUserName = useSelector(state => state.auth.username)
+  const idCurrentChannel = useSelector(state => state.ui.selectedChannelId)
   const dispatch = useDispatch()
 
-  const { data: messages } = useGetMessages()
-  const { data: channels } = useGetChannels()
+  const { error: messagesError } = useGetMessages()
+  const { error: channelsError } = useGetChannels()
 
   useEffect(() => {
-    if (channels) {
-      dispatch(addChannels(channels))
+    const error = messagesError || channelsError
+    if (error) {
+      if (error.status === 401) {
+        dispatch(removeAuth())
+        toast.error(t('errors.fetchError'))
+      }
+      else {
+        toast.error(t('errors.networkError'))
+      }
     }
-    if (messages) {
-      dispatch(addMessages(messages))
-    }
-  }, [dispatch, channels, messages])
+  }, [dispatch, messagesError, channelsError])
 
   return (
     <>
@@ -41,8 +40,11 @@ const Chat = () => {
             <Channels />
             <div className="col p-0 h-100">
               <div className="d-flex flex-column h-100">
-                <Messages />
-                <FormMessage />
+                <Messages currentChannelId={idCurrentChannel} />
+                <FormMessage
+                  currentChannelId={idCurrentChannel}
+                  userName={authUserName}
+                />
               </div>
             </div>
           </div>

@@ -10,12 +10,12 @@ import { useTranslation } from 'react-i18next'
 import * as yup from 'yup'
 import image from '../assets/img3.jpg'
 import { setAuth } from '../slices/authSlice.js'
-import { useSignup } from '../services/authApi.js'
 import { useNavigate } from 'react-router-dom'
+import { apiPath, apiRoutes } from '../routes/routes.js'
+import axios from 'axios'
 
 const SignUp = () => {
   const navigate = useNavigate()
-  const [signup] = useSignup()
   const { t } = useTranslation()
   const auth = useSelector(state => state.auth)
   const [isInputValid, setIsInputValid] = useState(true)
@@ -55,8 +55,8 @@ const SignUp = () => {
     validateOnChange: true,
     onSubmit: async (values) => {
       try {
-        const res = await signup({ username: values.username, password: values.password }).unwrap()
-        dispatch(setAuth({ username: res.username, token: res.token }))
+        const res = await axios.post(`${apiPath}/${apiRoutes.signupPath()}`, values)
+        dispatch(setAuth({ username: res.data.username, token: res.data.token }))
         navigate(routes.chat)
       }
       catch (err) {

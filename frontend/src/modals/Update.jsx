@@ -6,16 +6,14 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
 import filter from 'leo-profanity'
 import * as yup from 'yup'
-import { removeAuth } from '../slices/authSlice.js'
-import { updateChannel } from '../slices/channelsSlice.js'
-import { hideModal } from '../slices/modalSlice.js'
+import { hideModal } from '../slices/uiSlice.js'
 import { useSendUpdateChannel } from '../services/channelsApi.js'
 
 const Update = () => {
   const [sendUpdateChannel] = useSendUpdateChannel()
   const { t } = useTranslation()
   const dispatch = useDispatch()
-  const modalState = useSelector(state => state.modal)
+  const uiState = useSelector(state => state.ui)
   const channelsState = useSelector(state => state.channels)
   const channels = channelsState.ids.map(id => channelsState.entities[id].name)
   const inputRef = useRef(null)
@@ -33,8 +31,8 @@ const Update = () => {
   })
   const formik = useFormik({
     initialValues: {
-      name: modalState.processedChannel.name,
-      id: modalState.processedChannel.id,
+      name: uiState.processedChannel.name,
+      id: uiState.processedChannel.id,
     },
     validationSchema: schema,
     validateOnBlur: true,
@@ -42,22 +40,12 @@ const Update = () => {
     onSubmit: async (values) => {
       try {
         const editedChannel = { id: values.id, name: filter.clean(values.name) }
-        const res = await sendUpdateChannel(editedChannel).unwrap()
-        dispatch(updateChannel({
-          id: res.id,
-          changes: { name: res.name },
-        }))
+        await sendUpdateChannel(editedChannel).unwrap()
         dispatch(hideModal())
         toast.success(t('update.updated'))
       }
-      catch (error) {
-        if (error.status === 401) {
-          dispatch(removeAuth())
-          toast.error(t('errors.fetchError'))
-        }
-        else {
-          toast.error(t('errors.networkError'))
-        }
+      catch {
+        toast.error(t('errors.networkError'))
       }
     },
   })

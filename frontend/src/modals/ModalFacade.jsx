@@ -2,9 +2,9 @@ import getModal from '../modals/index.js'
 import { useSelector } from 'react-redux'
 
 const ModalFacade = () => {
-  const modalState = useSelector(state => state.modal)
-  if (modalState.type === null) return null
-  const Modal = getModal(modalState.type)
+  const { typeModal } = useSelector(state => state.ui)
+  if (typeModal === null) return null
+  const Modal = getModal(typeModal)
   return <Modal />
 }
 

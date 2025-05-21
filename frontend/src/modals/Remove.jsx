@@ -2,34 +2,24 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Modal, Button } from 'react-bootstrap'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-toastify'
-import { hideModal } from '../slices/modalSlice.js'
-import { removeChannel, selectChannel } from '../slices/channelsSlice.js'
-import { removeAuth } from '../slices/authSlice.js'
+import { hideModal, selectChannel } from '../slices/uiSlice.js'
 import { useSendRemoveChannel } from '../services/channelsApi.js'
 
 const Remove = () => {
   const [sendRemoveChannel] = useSendRemoveChannel()
   const { t } = useTranslation()
   const dispatch = useDispatch()
-  const modalState = useSelector(state => state.modal)
-  const idCurrent = modalState.processedChannel.id
+  const idCurrent = useSelector(state => state.ui.processedChannel.id)
   const defaultChannelId = '1'
   const removeHandler = async () => {
     try {
-      const res = await sendRemoveChannel(idCurrent).unwrap()
-      dispatch(removeChannel(res.id))
+      await sendRemoveChannel(idCurrent).unwrap()
       toast.success(t('remove.removed'))
       dispatch(hideModal())
       dispatch(selectChannel(defaultChannelId))
     }
-    catch (error) {
-      if (error.status === 401) {
-        dispatch(removeAuth())
-        toast.error(t('errors.fetchError'))
-      }
-      else {
-        toast.error(t('errors.networkError'))
-      }
+    catch {
+      toast.error(t('errors.networkError'))
     }
   }
   return (
